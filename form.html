@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Tracker Form</title>
+    <style>
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="time"] { width: 200px; padding: 5px; }
+        input[readonly] { background-color: #f0f0f0; }
+        button { margin-top: 15px; padding: 8px 16px; }
+    </style>
+    <script>
+        function calculateDuration() {
+            const start = document.getElementById("start").value;
+            const end = document.getElementById("end").value;
+
+            if (start && end) {
+                const startTime = new Date(`1970-01-01T${start}:00`);
+                const endTime = new Date(`1970-01-01T${end}:00`);
+
+                let diffMs = endTime - startTime;
+                if (diffMs < 0) diffMs += 24 * 3600 * 1000; // handle overnight
+
+                const hours = Math.floor(diffMs / 3600000);
+                const minutes = Math.floor((diffMs % 3600000) / 60000);
+
+                document.getElementById("duration").value = `${hours} h ${minutes} m`;
+            } else {
+                document.getElementById("duration").value = "";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Submit Work Log</h2>
+    <form action="submit.php" method="POST">
+        <label>Name:</label>
+        <input type="text" name="name" placeholder="Location Name" required>
+
+        <label>Message:</label>
+        <input type="text" name="message" placeholder="Function/Parts" required>
+
+        <label>Start Time:</label>
+        <input type="time" name="start" id="start" required onchange="calculateDuration()">
+
+        <label>End Time:</label>
+        <input type="time" name="end" id="end" required onchange="calculateDuration()">
+
+        <label>Duration (auto-calculated):</label>
+        <input type="text" name="duration" id="duration" readonly>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
